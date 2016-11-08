@@ -39,6 +39,7 @@ jump_speed = jump_speed_normal;
 move_speed = 5;
 terminal_g = 10;
 jumps = 0;
+
 </string>
           </argument>
         </arguments>
@@ -94,28 +95,32 @@ key_up = keyboard_check_pressed(ord("W")) || keyboard_check_pressed(vk_up);
 move = key_right + -(key_left);
 hsp= move * move_speed;
 
-//player affected by gravity. Set Terminal velocity
-vsp = min(vsp + grav, terminal_g);
-
-
-// If player is on the floor, reset max number of jumps
+//if player in on the ground
 if(place_meeting(x, y + 1, obj_wall))
 {
+    vsp = 0;
+    //reset jumps to max number of jumps
     jumps = jumps_max;
 }
-else if(jumps == jumps_max)
+else
+//if player is in the air
 {
-    jumps = jumps_max - 1;
+    //player affected by gravity. Set Terminal velocity
+    vsp = min(vsp + grav, terminal_g);
+    
+    //if player did not use jump to be in air, reduce max number of jumps by 1
+    if(jumps == jumps_max)
+        jumps = jumps_max - 1;
 }
 
-//check if jump is available, and jump, reduce jumps by 1
+//check if jump is available, jump, reduce jumps by 1
 if(key_up &amp;&amp; (jumps &gt; 0))
 {
     vsp =  -jump_speed;
     jumps -=1;
 }
 
-//horizontal collision (pixel perfect collision)
+//horizontal collision 
 if(place_meeting(x + hsp, y, obj_wall))
 {
     //whle person has not met the wall, keep moving towards it
@@ -134,23 +139,16 @@ if(place_meeting(x, y + vsp, obj_wall))
 }
 
 
-/*Wall Drag Logic
-    If player is beside wall, and pressing the direction towards the wall, and is falling
-    falls with 1.2 the gravity
-*/
+//Wall Logic
 if(place_meeting(x+move, y, obj_wall) &amp;&amp; vsp &gt; 0)
 {
-    y = y + terminal_g/5;  
-    vsp = 0;
+    vsp = terminal_g/5;
     
     //wall jump
     if(key_up)
     {
-     vsp -= jump_speed;   
+        vsp = -jump_speed;   
     }
-    
-    
-    
 }
 
 
