@@ -30,6 +30,7 @@
 //jump speeds
 jump_speed_normal = 7;
 jump_speed_pwr = 10;
+jumps_max = 2;
 
 grav = 0.2;
 hsp = 0;
@@ -37,6 +38,7 @@ vsp = 0;
 jump_speed = jump_speed_normal;
 move_speed = 5;
 terminal_g = 10;
+jumps = 0;
 </string>
           </argument>
         </arguments>
@@ -96,12 +98,21 @@ hsp= move * move_speed;
 vsp = min(vsp + grav, terminal_g);
 
 
-// If player is on the floor, is able to jump
+// If player is on the floor, reset max number of jumps
 if(place_meeting(x, y + 1, obj_wall))
 {
-    //stop falling, be able to jump
-    vsp = key_up * -jump_speed;
+    jumps = jumps_max;
+}
+else if(jumps == jumps_max)
+{
+    jumps = jumps_max - 1;
+}
 
+//check if jump is available, and jump, reduce jumps by 1
+if(key_up &amp;&amp; (jumps &gt; 0))
+{
+    vsp =  -jump_speed;
+    jumps -=1;
 }
 
 //horizontal collision (pixel perfect collision)
@@ -121,6 +132,7 @@ if(place_meeting(x, y + vsp, obj_wall))
     y += sign(vsp);
    vsp = 0;
 }
+
 
 /*Wall Drag Logic
     If player is beside wall, and pressing the direction towards the wall, and is falling
