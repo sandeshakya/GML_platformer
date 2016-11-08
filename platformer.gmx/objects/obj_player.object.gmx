@@ -40,6 +40,31 @@ move_speed = 5;
 terminal_g = 10;
 jumps = 0;
 
+//toggle whether player has control over his horizontal direction
+dir_control = 1;
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="2" enumb="1">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>dir_control = 1;
 </string>
           </argument>
         </arguments>
@@ -93,7 +118,10 @@ key_up = keyboard_check_pressed(ord("W")) || keyboard_check_pressed(vk_up);
 
 //react to inputs
 move = key_right + -(key_left);
-hsp= move * move_speed;
+if(dir_control)
+    hsp= move * move_speed;
+else
+    hsp =  sign(hsp);
 
 //if player in on the ground
 if(place_meeting(x, y + 1, obj_wall))
@@ -132,7 +160,7 @@ if(place_meeting(x + hsp, y, obj_wall))
 //vertical collision
 if(place_meeting(x, y + vsp, obj_wall))
 {
-    //whle person has not met the floor, keep moving towards it
+    //whle person has not met the floor, keep moving towadirds it
    while(!(place_meeting(x, y + sign(vsp), obj_wall)))
     y += sign(vsp);
    vsp = 0;
@@ -143,11 +171,15 @@ if(place_meeting(x, y + vsp, obj_wall))
 if(place_meeting(x+move, y, obj_wall) &amp;&amp; vsp &gt; 0)
 {
     vsp = terminal_g/5;
-    
+    //turn jumps to 0 so that player uses wall jump logic
+    jumps = 0;
     //wall jump
     if(key_up)
     {
-        vsp = -jump_speed;   
+        vsp = -jump_speed;  
+        hsp = -(move) * move_speed;
+        dir_control = 0;
+        alarm[1] = fps/5;
     }
 }
 
