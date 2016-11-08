@@ -140,8 +140,16 @@ if(place_meeting(x, y + vsp, obj_wall))
 */
 if(place_meeting(x+move, y, obj_wall) &amp;&amp; vsp &gt; 0)
 {
-    y = y + terminal_g/6;  
+    y = y + terminal_g/5;  
     vsp = 0;
+    
+    //wall jump
+    if(key_up)
+    {
+     vsp -= jump_speed;   
+    }
+    
+    
     
 }
 
