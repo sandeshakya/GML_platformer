@@ -181,6 +181,17 @@ if(place_meeting(x, y + vsp, obj_wall))
    vsp = 0;
 }
 
+if(place_meeting(x + hsp, y + vsp, obj_wall))
+{
+    while(!(place_meeting(x + sign(hsp), y + sign(vsp), obj_wall)))
+    {
+        x += sign(hsp);
+        y += sign(vsp);
+    }
+    hsp = 0;
+    vsp = 0;
+}
+
 
 //Wall Logic
 if(place_meeting(x+move, y, obj_wall) &amp;&amp; vsp &gt; 0)
