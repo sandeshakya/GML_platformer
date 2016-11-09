@@ -32,15 +32,16 @@ jump_speed_normal = 7;
 jump_speed_pwr = 10;
 jumps_max = 2;
 
-grav = 0.2;
+grav = 0.25;
 hsp = 0;
 vsp = 0;
 jump_speed = jump_speed_normal;
 move_speed = 5;
 terminal_g = 10;
 jumps = 0;
+resistance = 0.2;
 
-//toggle whether player has control over his horizontal direction
+//toggle whether player has control over his direction
 dir_control = 1;
 
 </string>
@@ -119,13 +120,21 @@ key_up = keyboard_check_pressed(ord("W")) || keyboard_check_pressed(vk_up);
 
 //react to inputs
 move = key_right + -(key_left);
+
+//after player has wall jumped, and timer has run out, so player regains control
 if(dir_control)
 {   
+    //setting max speed
     if(abs(hsp) &lt;= abs(move_speed))
-        hsp = hsp + 0.2*move;
+        //momentum logic
+        hsp = hsp + resistance * move;
     else
         hsp = move_speed * sign(hsp);
+    //for player stopping
+    if((move == 0) &amp;&amp; (hsp != 0))
+        hsp = hsp - sign(hsp) * resistance;
 }
+// right after player has wall jumped, move horizontally in the opposite direction
 else
     hsp =  sign(hsp);
 
@@ -183,6 +192,7 @@ if(place_meeting(x+move, y, obj_wall) &amp;&amp; vsp &gt; 0)
     if(key_up)
     {
         vsp = -jump_speed;  
+        //move in the opposite direction for some time
         hsp = -(move) * move_speed;
         dir_control = 0;
         alarm[1] = fps/5;
