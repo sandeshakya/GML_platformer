@@ -42,6 +42,7 @@ jumps = 0;
 
 //toggle whether player has control over his horizontal direction
 dir_control = 1;
+
 </string>
           </argument>
         </arguments>
@@ -119,7 +120,12 @@ key_up = keyboard_check_pressed(ord("W")) || keyboard_check_pressed(vk_up);
 //react to inputs
 move = key_right + -(key_left);
 if(dir_control)
-    hsp= move * move_speed;
+{   
+    if(abs(hsp) &lt;= abs(move_speed))
+        hsp = hsp + 0.2*move;
+    else
+        hsp = move_speed * sign(hsp);
+}
 else
     hsp =  sign(hsp);
 
